@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>api-autenticacao</artifactId>
+		<groupId>br.com.projeto.regis</groupId>
+		<version>1.0</version>
+	</parent>
+
+	<groupId>${project.parent.groupId}</groupId>
+	<artifactId>api-autenticacao-war</artifactId>
+	<version>${project.parent.version}</version>
+	<packaging>war</packaging>
+
+	<name>api-autenticacao - WAR</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>br.com.projeto.regis</groupId>
+			<artifactId>api-autenticacao-core</artifactId>
+			<version>${project.parent.version}</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>br.com.projeto.regis</groupId>
+			<artifactId>api-autenticacao-services</artifactId>
+			<version>${project.parent.version}</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

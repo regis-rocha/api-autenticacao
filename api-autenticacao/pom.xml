@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.com.projeto.regis</groupId>
+	<artifactId>api-autenticacao</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+
+	<name>api-autenticacao</name>
+
+	<properties>
+		<!-- Configuracoes do projeto -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!--Versoes de dependencias nao gerenciadas pelo Spring -->
+		<spring.parent.version>1.5.3.RELEASE</spring.parent.version>
+		<spring.log.version>1.3.7.RELEASE</spring.log.version>
+		<log4j.version>1.2.17</log4j.version>
+	</properties>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.3.RELEASE</version>
+	</parent>
+	
+	<!-- Management dependencies -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-lang3</artifactId>
+			    <version>3.5</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>junit</groupId>
+			    <artifactId>junit</artifactId>
+			    <version>4.12</version>
+			    <scope>test</scope>
+			</dependency>
+			
+			<dependency>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-starter-security</artifactId>
+	            <version>1.5.4.RELEASE</version>
+	        </dependency>
+	
+	        <dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-starter-data-jpa</artifactId>
+			    <version>1.5.4.RELEASE</version>
+			</dependency>
+						
+		</dependencies>
+	</dependencyManagement>
+	
+	<modules>
+		<module>api-autenticacao-core</module>
+		<module>api-autenticacao-services</module>
+		<module>api-autenticacao-war</module>
+	</modules>
+
+</project>

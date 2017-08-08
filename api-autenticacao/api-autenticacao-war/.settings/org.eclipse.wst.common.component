@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="api-autenticacao-war-1.0">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <dependent-module archiveName="api-autenticacao-core-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/api-autenticacao-core/api-autenticacao-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="api-autenticacao-services-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/api-autenticacao-services/api-autenticacao-services">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="api-autenticacao-war"/>
+        <property name="java-output-path" value="/api-autenticacao-war/target/classes"/>
+    </wb-module>
+</project-modules>
