@@ -35,7 +35,7 @@ public class ValidateHelper {
 	}
 	
 	public boolean isEmpty(final String object, final String message) throws ValidationException {
-		this.isObjectNull(object);
+		this.isObjectNull(object, message);
 		
 		if (StringUtils.isBlank(object)) {
 			throw new ValidationException(message);

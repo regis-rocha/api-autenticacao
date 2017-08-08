@@ -179,6 +179,29 @@ public final class Response<BodyType> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Create object that represents the internal Bad Request response.
+	 * 
+	 * Success response return 
+	 * 	. HTTP Status 		- BAD_REQUEST 
+	 *  . general Message 	- Bad Request 
+	 *  . responseInfo 		- empty 
+	 *  . reponseBody 		- empty
+	 * 
+	 * @return Response<T>
+	 */
+	public Response<BodyType> createValidationErrorResponse() {
+		// status INTERNAL_SERVER_ERROR http
+		this.httpStatus = HttpStatus.BAD_REQUEST;
+
+		// message INTERNAL_SERVER_ERROR
+		this.generalMessage = HttpStatus.BAD_REQUEST.getReasonPhrase();
+
+		// empty additional information
+		this.responseInfo = new ResponseInfo();
+		
+		return this;
+	}
 	
 	/**
 	 * Create object that represents no content.

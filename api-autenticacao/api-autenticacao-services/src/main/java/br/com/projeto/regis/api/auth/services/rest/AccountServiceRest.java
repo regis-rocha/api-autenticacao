@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.exception.AuthException;
 import br.com.projeto.regis.api.auth.exception.FindException;
+import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.service.AccountService;
 import br.com.projeto.regis.api.auth.service.ws.AccountServiceWs;
 import br.com.projeto.regis.api.auth.types.Response;
@@ -52,6 +53,9 @@ public class AccountServiceRest implements AccountServiceWs {
 		
 		try {
 			this.accountService.create(account);
+		} catch (ValidationException e) {
+			log.error("", e);
+			return new Response<Account>().createValidationErrorResponse().addGeneralMessage(e.getMessage());
 		} catch (Exception e) {
 			log.error("", e);
 			return new Response<Account>().createErrorResponse();
@@ -82,6 +86,9 @@ public class AccountServiceRest implements AccountServiceWs {
 				return new Response<Account>().createSuccessResponse().addBody(acc);
 			}
 			
+		} catch (ValidationException e) {
+			log.error("", e);
+			return new Response<Account>().createValidationErrorResponse();	
 		} catch (Exception e) {
 			log.error("", e);
 			return new Response<Account>().createErrorResponse();
@@ -106,6 +113,9 @@ public class AccountServiceRest implements AccountServiceWs {
 			
 			return new Response<Account>().createEmptyResponse().addBody(account);
 			
+		} catch (ValidationException e) {
+			log.error("", e);
+			return new Response<Account>().createValidationErrorResponse();
 		} catch (Exception e) {
 			log.error("", e);
 			return new Response<Account>().createErrorResponse();
