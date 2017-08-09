@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import br.com.projeto.regis.api.auth.Application;
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.domain.Phone;
+import br.com.projeto.regis.api.auth.exception.AccountExistsException;
 import br.com.projeto.regis.api.auth.exception.PersistException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.service.AccountService;
@@ -29,12 +30,12 @@ public class AccountServiceTest {
 	private AccountService accountService;
 
 	@Test(expected = ValidationException.class)
-	public void persistAccountNull() throws PersistException {
+	public void persistAccountNull() throws PersistException, AccountExistsException {
 		this.accountService.create(null);
 	}
 	
 	@Test(expected = ValidationException.class)
-	public void persistAccountEmailNull() throws PersistException {
+	public void persistAccountEmailNull() throws PersistException, AccountExistsException {
 		final Account acc = new Account();
 		
 		acc.setEmail(null);
@@ -45,7 +46,7 @@ public class AccountServiceTest {
 	}
 	
 	@Test(expected = ValidationException.class)
-	public void persistAccountNameNull() throws PersistException {
+	public void persistAccountNameNull() throws PersistException, AccountExistsException {
 		final Account acc = new Account();
 		
 		acc.setEmail("regisrocha3@gmail.com");
@@ -56,7 +57,7 @@ public class AccountServiceTest {
 	}
 	
 	@Test(expected = ValidationException.class)
-	public void persistAccountPasswordNull() throws PersistException {
+	public void persistAccountPasswordNull() throws PersistException, AccountExistsException {
 		final Account acc = new Account();
 		
 		acc.setEmail("regisrocha3@gmail.com");
@@ -67,15 +68,15 @@ public class AccountServiceTest {
 	}
 	
 	@Test(expected = ValidationException.class)
-	public void persistAccountNewObject() throws PersistException {
+	public void persistAccountNewObject() throws PersistException, AccountExistsException {
 		this.accountService.create(new Account());
 	}
 	
 	@Test
-	public void persistAccount() throws PersistException {
+	public void persistAccount() throws PersistException, AccountExistsException {
 		final Account acc = new Account();
 		
-		acc.setEmail("regisrocha3@gmail.com");
+		acc.setEmail("regisrocha@gmail.com");
 		acc.setName("Regis");
 		acc.setPassword("1234");
 		
@@ -83,9 +84,9 @@ public class AccountServiceTest {
 	}
 	
 	@Test
-	public void persistAccountWithPhone() throws PersistException {
+	public void persistAccountWithPhone() throws PersistException, AccountExistsException {
 		final Account acc = new Account();
-		acc.setEmail("regisrocha3@gmail.com");
+		acc.setEmail("regisrocha2@gmail.com");
 		acc.setName("Regis");
 		acc.setPassword("1234");
 		
@@ -98,14 +99,28 @@ public class AccountServiceTest {
 		this.accountService.create(acc);
 	}
 	
+	@Test(expected = AccountExistsException.class)
+	public void persistAccountDuplicateEmail() throws PersistException, AccountExistsException {
+		final Account acc = new Account();
+		acc.setEmail("mesmoEmail@gmail.com");
+		acc.setName("Regis");
+		acc.setPassword("1234");
+		
+		final Phone phone = new Phone();
+		phone.setDdd(11);
+		phone.setNumber(982895858L);
+		
+		acc.setPhones(Arrays.asList(new Phone[]{phone}));
+		
+		// persist 1
+		this.accountService.create(acc);
+		
+		// persist 2 -- erro email duplicado
+		this.accountService.create(acc);
+	}
+	
 	@Bean
     public DataSource dataSource(){
-        /*DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/autenticacao");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgres");
-        return dataSource;*/
         
         final EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		final EmbeddedDatabase db = builder

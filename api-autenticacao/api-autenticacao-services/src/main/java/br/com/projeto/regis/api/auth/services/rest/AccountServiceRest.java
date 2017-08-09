@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.projeto.regis.api.auth.domain.Account;
+import br.com.projeto.regis.api.auth.exception.AccountExistsException;
 import br.com.projeto.regis.api.auth.exception.AuthException;
 import br.com.projeto.regis.api.auth.exception.FindException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
@@ -53,7 +54,8 @@ public class AccountServiceRest implements AccountServiceWs {
 		
 		try {
 			this.accountService.create(account);
-		} catch (ValidationException e) {
+			
+		} catch (AccountExistsException | ValidationException e) {
 			log.error("", e);
 			return new Response<Account>().createValidationErrorResponse().addGeneralMessage(e.getMessage());
 		} catch (Exception e) {

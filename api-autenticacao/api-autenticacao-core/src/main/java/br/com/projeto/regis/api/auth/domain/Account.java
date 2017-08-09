@@ -20,6 +20,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.projeto.regis.api.auth.exception.InitilizationBeanException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.validate.BeanValidation;
@@ -28,7 +30,9 @@ import br.com.projeto.regis.api.auth.validate.ValidateHelper;
 @Entity
 @Table(name = "account")
 @XmlRootElement
-@NamedQueries(value = {@NamedQuery(name = "Account.signin", query = "SELECT a FROM Account a WHERE email=:email AND password=:password")})
+@NamedQueries(value = {
+		@NamedQuery(name = "Account.findByEmail",	query = "SELECT a FROM Account a WHERE a.email=:email"),
+		@NamedQuery(name = "Account.signin", 		query = "SELECT a FROM Account a WHERE email=:email AND password=:password")})
 public class Account implements Serializable, BeanInitializer<Account>, BeanValidation {
 
 	/**
@@ -63,7 +67,16 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "account_phone", joinColumns = {@JoinColumn(name = "id_phone", referencedColumnName = "id")})
 	private List<Phone> phones;
-
+	
+	@Column(name = "token")
+	private String token;
+	
+	@JsonIgnore
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "timestamp_created_token")
+	private Calendar timestapCreatedToken;
+	
+	
 	/**
 	 * @return the name
 	 */
@@ -148,6 +161,20 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 		return lastLogin;
 	}
 
+	/**
+	 * @return the token
+	 */
+	public String getToken() {
+		return token;
+	}
+
+	/**
+	 * @return the timestapCreatedToken
+	 */
+	public Calendar getTimestapCreatedToken() {
+		return timestapCreatedToken;
+	}
+
 	@Override
 	public Account initilizeBean() throws InitilizationBeanException {
 		return new Account();
@@ -176,5 +203,9 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 		this.created = Calendar.getInstance();
 		
 		this.modified = Calendar.getInstance();
+		
+		this.timestapCreatedToken = Calendar.getInstance();
+		
+		this.token = String.valueOf(UUID.randomUUID());
 	}
 }

@@ -1,6 +1,7 @@
 package br.com.projeto.regis.api.auth.service;
 
 import br.com.projeto.regis.api.auth.domain.Account;
+import br.com.projeto.regis.api.auth.exception.AccountExistsException;
 import br.com.projeto.regis.api.auth.exception.AuthException;
 import br.com.projeto.regis.api.auth.exception.FindException;
 import br.com.projeto.regis.api.auth.exception.PersistException;
@@ -19,8 +20,10 @@ public interface AccountService {
 	 * @param account - Account
 	 * 
 	 * @throws PersistException
+	 * 
+	 * @throws AccountExistsException
 	 */
-	void create(Account account) throws PersistException;
+	void create(Account account) throws PersistException, AccountExistsException;
 
 	/**
 	 * Find an specific account
