@@ -76,7 +76,6 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 	@Column(name = "timestamp_created_token")
 	private Calendar timestapCreatedToken;
 	
-	
 	/**
 	 * @return the name
 	 */
@@ -207,5 +206,33 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 		this.timestapCreatedToken = Calendar.getInstance();
 		
 		this.token = String.valueOf(UUID.randomUUID());
+	}
+	
+
+	/**
+	 * Update field lastLogin to current timestamp
+	 * 
+	 * @return self reference
+	 */
+	public Account updateLastLogin() {
+		this.lastLogin = Calendar.getInstance();
+		return this;
+	}
+	
+	/**
+	 * Construtor padrao
+	 */
+	public Account() {
+	}
+	
+	/**
+	 * Construtor para receber email e senha
+	 * 
+	 * @param email - String
+	 * @param senha	- String
+	 */
+	public Account(final String email, final String senha) {
+		this.email = email;
+		this.password = senha;
 	}
 }

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.exception.AccountExistsException;
-import br.com.projeto.regis.api.auth.exception.AuthException;
-import br.com.projeto.regis.api.auth.exception.FindException;
+import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.service.AccountService;
+import br.com.projeto.regis.api.auth.service.LoginService;
 import br.com.projeto.regis.api.auth.service.ws.AccountServiceWs;
 import br.com.projeto.regis.api.auth.types.Response;
 
@@ -38,6 +38,12 @@ public class AccountServiceRest implements AccountServiceWs {
 	 */
 	@Autowired
 	private AccountService accountService;
+	
+	/**
+	 * @Inject
+	 */
+	@Autowired
+	private LoginService loginService;
 	
 	
 	/**
@@ -138,13 +144,13 @@ public class AccountServiceRest implements AccountServiceWs {
 		log.info("signing");
 		
 		try {
-			this.accountService.signin(account);
+			final Account accountLogged = this.loginService.login(account.getEmail(), account.getPassword());
+
+			return new Response<Account>().createSuccessResponse().addBody(accountLogged);
 			
-			return new Response<Account>().createSuccessResponse();
-		} catch (AuthException e) {
-			return new Response<Account>().addHttpStatus(HttpStatus.UNAUTHORIZED)
-					.addGeneralMessage(HttpStatus.UNAUTHORIZED.getReasonPhrase());
-		} catch (FindException e) {
+		} catch (LoginInvalidException e) {
+			return new Response<Account>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(e.getMessage());
+		} catch (Exception e) {
 			return new Response<Account>().createErrorResponse();
 		}
 	}

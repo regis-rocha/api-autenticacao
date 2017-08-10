@@ -110,14 +110,23 @@ public class AccountRepository {
 	 * @throws FindException
 	 * @throws AuthException
 	 */
-	public void signin(final Account account) throws FindException, AuthException {
+	public Account signin(final Account account) throws FindException, AuthException {
 		try {
-			this.entityManager.createNamedQuery("Account.signin", Account.class)
+			// find account by email and password
+			final Account accountDB = this.entityManager.createNamedQuery("Account.signin", Account.class)
 					.setParameter("email", account.getEmail())
 					.setParameter("password", account.getPassword()).getSingleResult();
 			
+			// update timestamp last login
+			accountDB.updateLastLogin();
+			
+			// update
+			this.entityManager.merge(accountDB);
+			
+			return accountDB;
+			
 		} catch (NoResultException e) {
-			throw new AuthException("Usuario ou senha invalidos");
+			throw new AuthException("Usuário e/ou senha inválidos");
 		} catch (Exception e) {
 			throw new FindException(e);
 		}

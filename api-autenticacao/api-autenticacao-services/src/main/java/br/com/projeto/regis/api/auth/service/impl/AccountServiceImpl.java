@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.exception.AccountExistsException;
-import br.com.projeto.regis.api.auth.exception.AuthException;
 import br.com.projeto.regis.api.auth.exception.FindException;
 import br.com.projeto.regis.api.auth.exception.PersistException;
 import br.com.projeto.regis.api.auth.repository.AccountRepository;
@@ -125,35 +124,6 @@ public class AccountServiceImpl implements AccountService {
 			LOG.error("Conta nao encontrada", e);
 			throw new PersistException("Conta nao encontrada");
 		} catch (PersistException e) {
-			LOG.error("", e);
-			throw e;
-		}
-	}
-
-
-	/**
-	 * Sign in account
-	 * 
-	 * @param account - Account
-	 * 
-	 * @throws FindException, AuthException
-	 */
-	@Override
-	public void signin(final Account account) throws FindException, AuthException {
-		LOG.info("signin account");
-		
-		this.validate.isObjectNull(account, "Dados da conta nao foram preenchidos");
-		
-		this.validate.isEmpty(account.getEmail(), "E-mail nao foi preenchido");
-		
-		this.validate.isEmpty(account.getPassword(), "Senha nao foi preenchida");
-		
-		try {
-			this.accountRepository.signin(account);
-		} catch (AuthException e) {
-			LOG.error("Usuario ou senha invalidos");
-			throw e;
-		} catch (FindException e) {
 			LOG.error("", e);
 			throw e;
 		}
