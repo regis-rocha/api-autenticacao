@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import br.com.projeto.regis.api.auth.Application;
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.exception.AccountExistsException;
+import br.com.projeto.regis.api.auth.exception.AccountNotFoundException;
 import br.com.projeto.regis.api.auth.exception.LoginFailedException;
 import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
 import br.com.projeto.regis.api.auth.exception.PersistException;
@@ -30,22 +31,22 @@ public class LoginServiceTest {
 	private AccountService accountService;
 	
 	@Test(expected = ValidationException.class)
-	public void loginEmailNotFilledTest() throws ValidationException, LoginInvalidException, LoginFailedException {
+	public void loginEmailNotFilledTest() throws ValidationException, LoginInvalidException, LoginFailedException, AccountNotFoundException {
 		this.loginService.login(null, "pass");
 	}
 	
 	@Test(expected = ValidationException.class)
-	public void loginPasswordNotFilledTest() throws ValidationException, LoginInvalidException, LoginFailedException {
+	public void loginPasswordNotFilledTest() throws ValidationException, LoginInvalidException, LoginFailedException, AccountNotFoundException {
 		this.loginService.login("email@email.com", null);
 	}
 	
-	@Test(expected = LoginInvalidException.class)
-	public void loginEmailNotExistsTest() throws ValidationException, LoginInvalidException, LoginFailedException {
+	@Test(expected = AccountNotFoundException.class)
+	public void loginEmailNotExistsTest() throws ValidationException, LoginInvalidException, LoginFailedException, AccountNotFoundException {
 		this.loginService.login("email@email.com", "pass");
 	}
 	
-	@Test(expected = LoginInvalidException.class)
-	public void loginInvalidEmailTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException {
+	@Test(expected = AccountNotFoundException.class)
+	public void loginInvalidEmailTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException, AccountNotFoundException {
 		final Account account = new Account();
 		
 		account.setEmail("regisrocha1@gmail.com");
@@ -59,7 +60,7 @@ public class LoginServiceTest {
 	
 	
 	@Test
-	public void loginSuccessTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException {
+	public void loginSuccessTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException, AccountNotFoundException {
 		final Account account = new Account();
 		
 		account.setEmail("regisrocha3@gmail.com");
@@ -72,7 +73,7 @@ public class LoginServiceTest {
 	}
 	
 	@Test
-	public void loginSuccessCompareAccountTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException {
+	public void loginSuccessCompareAccountTest() throws ValidationException, LoginInvalidException, LoginFailedException, PersistException, AccountExistsException, AccountNotFoundException {
 		final Account accountLogin = new Account();
 		
 		accountLogin.setEmail("regisrocha4@gmail.com");

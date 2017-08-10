@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.projeto.regis.api.auth.domain.Account;
 import br.com.projeto.regis.api.auth.exception.AccountExistsException;
+import br.com.projeto.regis.api.auth.exception.AccountNotFoundException;
 import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.service.AccountService;
@@ -89,7 +90,8 @@ public class AccountServiceRest implements AccountServiceWs {
 			final Account acc = this.accountService.find(id);
 			
 			if (acc == null) {
-				return new Response<Account>().createEmptyResponse();
+				return new Response<Account>().addHttpStatus(HttpStatus.NOT_FOUND)
+						.addGeneralMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
 			} else {
 				return new Response<Account>().createSuccessResponse().addBody(acc);
 			}
@@ -147,7 +149,9 @@ public class AccountServiceRest implements AccountServiceWs {
 			final Account accountLogged = this.loginService.login(account.getEmail(), account.getPassword());
 
 			return new Response<Account>().createSuccessResponse().addBody(accountLogged);
-			
+		
+		} catch (AccountNotFoundException e) {
+			return new Response<Account>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(e.getMessage());
 		} catch (LoginInvalidException e) {
 			return new Response<Account>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(e.getMessage());
 		} catch (Exception e) {

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.projeto.regis.api.auth.domain.Account;
+import br.com.projeto.regis.api.auth.exception.AccountNotFoundException;
 import br.com.projeto.regis.api.auth.exception.AuthException;
 import br.com.projeto.regis.api.auth.exception.LoginFailedException;
 import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
@@ -50,9 +51,10 @@ public class LoginServiceImpl implements LoginService {
 	 * @throws ValidationException
 	 * @throws LoginInvalidException
 	 * @throws LoginFailedException 
+	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public Account login(final String email, final String senha) throws ValidationException, LoginInvalidException, LoginFailedException {
+	public Account login(final String email, final String senha) throws ValidationException, LoginInvalidException, LoginFailedException, AccountNotFoundException {
 		LOG.info("login account");
 		
 		this.validate.isEmpty(email, "E-mail nao foi preenchido");
@@ -64,9 +66,9 @@ public class LoginServiceImpl implements LoginService {
 			final Account accountEmail = this.accountRepository.findByEmail(email);
 			
 			if (accountEmail == null) {
-				throw new LoginInvalidException("Usuário e/ou senha inválidos");
+				throw new AccountNotFoundException("Usuário e/ou senha inválidos");
 			}
-		} catch (LoginInvalidException e) {
+		} catch (AccountNotFoundException e) {
 			throw e;
 		} catch (Exception e) {
 			LOG.error("", e);

@@ -1,6 +1,7 @@
 package br.com.projeto.regis.api.auth.service;
 
 import br.com.projeto.regis.api.auth.domain.Account;
+import br.com.projeto.regis.api.auth.exception.AccountNotFoundException;
 import br.com.projeto.regis.api.auth.exception.LoginFailedException;
 import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
@@ -24,7 +25,9 @@ public interface LoginService {
 	 * @throws ValidationException
 	 * @throws LoginInvalidException
 	 * @throws LoginFailedException
+	 * @throws AccountNotFoundException
+	 * 
 	 */
-	Account login(String email, String senha) throws ValidationException, LoginInvalidException, LoginFailedException;
+	Account login(String email, String senha) throws ValidationException, LoginInvalidException, LoginFailedException, AccountNotFoundException;
 	
 }
