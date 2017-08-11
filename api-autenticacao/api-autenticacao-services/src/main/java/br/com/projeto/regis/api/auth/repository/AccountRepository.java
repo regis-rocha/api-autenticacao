@@ -131,4 +131,25 @@ public class AccountRepository {
 			throw new FindException(e);
 		}
 	}
+
+
+	
+	/**
+	 * Find Account By Token.
+	 * 
+	 * @param token - String
+	 * 
+	 * @throws FindException
+	 */
+	public Account findByToken(final String token) throws FindException {
+		try {
+			return this.entityManager.createNamedQuery("Account.findByToken", Account.class)
+					.setParameter("token", token).getSingleResult();
+			
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
+			throw new FindException(e);
+		}
+	}
 }

@@ -32,6 +32,7 @@ import br.com.projeto.regis.api.auth.validate.ValidateHelper;
 @XmlRootElement
 @NamedQueries(value = {
 		@NamedQuery(name = "Account.findByEmail",	query = "SELECT a FROM Account a WHERE a.email=:email"),
+		@NamedQuery(name = "Account.findByToken", 	query = "SELECT a FROM Account a WHERE a.token=:token"),
 		@NamedQuery(name = "Account.signin", 		query = "SELECT a FROM Account a WHERE email=:email AND password=:password")})
 public class Account implements Serializable, BeanInitializer<Account>, BeanValidation {
 
