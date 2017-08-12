@@ -204,6 +204,8 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 		
 		this.modified = Calendar.getInstance();
 		
+		this.lastLogin = Calendar.getInstance(); 
+		
 		this.timestapCreatedToken = Calendar.getInstance();
 		
 		this.token = String.valueOf(UUID.randomUUID());
