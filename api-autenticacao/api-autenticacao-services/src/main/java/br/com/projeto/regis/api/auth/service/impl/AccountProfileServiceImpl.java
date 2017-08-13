@@ -125,8 +125,7 @@ public class AccountProfileServiceImpl implements AccountProfileService {
 		
 		return false;
 	}
-
-
+	
 	
 	/**
 	 * Validate if token is valid

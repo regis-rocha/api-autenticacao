@@ -14,7 +14,6 @@ import br.com.projeto.regis.api.auth.interceptor.InterceptorToken;
  *
  */
 @Configuration 
-//@EnableWebMvc 
 public class ConfugurationInterceptor extends WebMvcConfigurerAdapter {
 	
 	/**

@@ -1,6 +1,6 @@
 package br.com.projeto.regis.api.auth.service.ws;
 
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
 
 import br.com.projeto.regis.api.auth.response.AccountResponse;
 import br.com.projeto.regis.api.auth.types.Response;
@@ -19,9 +19,9 @@ public interface AccountServiceWs {
 	 * 
 	 * @param account - AccountRequest
 	 * 
-	 * @return Response<AccountResponse>
+	 * @return ResponseEntity<Response<AccountResponse>>
 	 */
-	Response<AccountResponse> create(AccountRequest account);
+	ResponseEntity<Response<AccountResponse>> create(AccountRequest account);
 	
 	/**
 	 * Find an account
@@ -29,17 +29,17 @@ public interface AccountServiceWs {
 	 * @param id 	- String
 	 * @param token	- String
 	 * 
-	 * @return Response<Account>
+	 * @return ResponseEntity<Response<AccountResponse>>
 	 */
-	Response<AccountResponse> findAccount(String id, String token);
+	ResponseEntity<Response<AccountResponse>> findAccount(String id, String token);
 	
 	/**
 	 * Sign in
 	 * 
 	 * @param account - AccountRequest
 	 * 
-	 * @return Response<AccountResponse>
+	 * @return ResponseEntity<Response<AccountResponse>>
 	 */
-	Response<AccountResponse> signin(@RequestBody AccountRequest account); 
+	ResponseEntity<Response<AccountResponse>> signin(AccountRequest account); 
 	
 }

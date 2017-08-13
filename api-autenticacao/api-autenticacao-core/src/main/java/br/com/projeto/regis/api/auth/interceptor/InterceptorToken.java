@@ -112,6 +112,8 @@ public class InterceptorToken extends HandlerInterceptorAdapter {
 			final String jsonInString = mapper.writeValueAsString(responseJson);
 			
 			writer.write(jsonInString);
+			
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		}
 	}
 	
@@ -137,6 +139,8 @@ public class InterceptorToken extends HandlerInterceptorAdapter {
 			final String jsonInString = mapper.writeValueAsString(responseJson);
 			
 			writer.write(jsonInString);
+			
+			response.setStatus(HttpStatus.NOT_FOUND.value());
 		}
 	}
 }

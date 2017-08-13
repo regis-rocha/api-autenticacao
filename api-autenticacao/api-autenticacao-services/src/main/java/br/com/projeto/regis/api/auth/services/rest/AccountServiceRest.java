@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -65,9 +66,11 @@ public class AccountServiceRest implements AccountServiceWs {
 	 */
 	@Override
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Response<AccountResponse> create(@RequestBody AccountRequest account) {
+	public ResponseEntity<Response<AccountResponse>> create(@RequestBody AccountRequest account) {
 		log.info("Creating account");
+
 		AccountResponse accountResponse = null;
+		final Response<AccountResponse> responseBody = new Response<AccountResponse>();
 		
 		try {
 			// convert request to entity and persist
@@ -78,13 +81,17 @@ public class AccountServiceRest implements AccountServiceWs {
 			
 		} catch (AccountExistsException | ValidationException e) {
 			log.error("", e);
-			return new Response<AccountResponse>().createValidationErrorResponse().addGeneralMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(responseBody.createValidationErrorResponse().addGeneralMessage(e.getMessage()));
+			
 		} catch (Exception e) {
 			log.error("", e);
-			return new Response<AccountResponse>().createErrorResponse();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(responseBody.createErrorResponse());
 		}
 		
-		return new Response<AccountResponse>().createSuccessCreatedResponse().addBody(accountResponse);
+		responseBody.createSuccessCreatedResponse().addBody(accountResponse);
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
 	}
 	
 	
@@ -93,14 +100,16 @@ public class AccountServiceRest implements AccountServiceWs {
 	 * 
 	 * @param id - String
 	 * 
-	 * @return Response<AccountResponse>
+	 * @return ResponseEntity<Response<AccountResponse>>
 	 */
 	@Override
 	@RequestMapping(value = "/account/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
-	public Response<AccountResponse> findAccount(@PathVariable String id, @RequestHeader String token) {
+	public ResponseEntity<Response<AccountResponse>> findAccount(@PathVariable String id, @RequestHeader String token) {
 		log.info("Finding account");
 		// message nao autorizado
 		final String naoAutorizado = "Não autorizado";
+		
+		final Response<AccountResponse> responseBody = new Response<AccountResponse>();
 		
 		try {
 			// find account
@@ -108,23 +117,23 @@ public class AccountServiceRest implements AccountServiceWs {
 			
 			if (acc == null) {
 				// not found
-				return new Response<AccountResponse>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(naoAutorizado);
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody.addGeneralMessage(naoAutorizado));
 			}
 			
 			// compare token account and token form
 			if (!acc.getToken().equals(token)) {
-				return new Response<AccountResponse>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(naoAutorizado);
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody.addGeneralMessage(naoAutorizado));
 			}
 
 			// success
-			return new Response<AccountResponse>().createSuccessResponse().addBody(this.accountHelper.convertToResponse(acc));
+			return ResponseEntity.status(HttpStatus.OK).body(responseBody.addBody(this.accountHelper.convertToResponse(acc)));
 			
 		} catch (ValidationException e) {
 			log.error("", e);
-			return new Response<AccountResponse>().createValidationErrorResponse();	
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody.createValidationErrorResponse());
 		} catch (Exception e) {
 			log.error("", e);
-			return new Response<AccountResponse>().createErrorResponse();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody.createErrorResponse());
 		}
 	}
 	
@@ -133,27 +142,29 @@ public class AccountServiceRest implements AccountServiceWs {
 	 * 
 	 * @param account - AccountRequest
 	 * 
-	 * @return Response<AccountResponse>
+	 * @return ResponseEntity<Response<AccountResponse>>
 	 */
 	@Override
 	@RequestMapping(value = "/account/signing", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Response<AccountResponse> signin(@RequestBody AccountRequest account) {
+	public ResponseEntity<Response<AccountResponse>> signin(@RequestBody AccountRequest account) {
 		log.info("signing");
+		
+		final Response<AccountResponse> responseBody = new Response<AccountResponse>();
 		
 		try {
 			// login
 			final Account accountLogged = this.loginService.login(account.getEmail(), account.getPassword());
 
 			// result
-			return new Response<AccountResponse>().createSuccessResponse()
-					.addBody(this.accountHelper.convertToResponse(accountLogged));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(responseBody.addBody(this.accountHelper.convertToResponse(accountLogged)));
 		
 		} catch (AccountNotFoundException e) {
-			return new Response<AccountResponse>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody.addGeneralMessage(e.getMessage()));
 		} catch (LoginInvalidException e) {
-			return new Response<AccountResponse>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody.addGeneralMessage(e.getMessage()));
 		} catch (Exception e) {
-			return new Response<AccountResponse>().createErrorResponse();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody.createErrorResponse());
 		}
 	}
 }
