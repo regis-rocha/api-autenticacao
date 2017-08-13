@@ -18,11 +18,13 @@ public interface AccountService {
 	 * 
 	 * @param account - Account
 	 * 
+	 * @return Account
+	 * 
 	 * @throws PersistException
 	 * 
 	 * @throws AccountExistsException
 	 */
-	void create(Account account) throws PersistException, AccountExistsException;
+	Account create(Account account) throws PersistException, AccountExistsException;
 
 	/**
 	 * Find an specific account
@@ -40,8 +42,10 @@ public interface AccountService {
 	 * 
 	 * @param id - Integer
 	 * 
+	 * @return Account
+	 * 
 	 * @throws PersistException
 	 */
-	void update(Account account) throws PersistException;
+	Account update(Account account) throws PersistException;
 
 }

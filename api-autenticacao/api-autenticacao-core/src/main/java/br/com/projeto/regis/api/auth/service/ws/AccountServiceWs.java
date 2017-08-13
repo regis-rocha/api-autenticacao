@@ -2,8 +2,9 @@ package br.com.projeto.regis.api.auth.service.ws;
 
 import org.springframework.web.bind.annotation.RequestBody;
 
-import br.com.projeto.regis.api.auth.domain.Account;
+import br.com.projeto.regis.api.auth.response.AccountResponse;
 import br.com.projeto.regis.api.auth.types.Response;
+import br.com.projetos.regis.api.auth.request.AccountRequest;
 
 /**
  * Interface to expose functionalities by web services about account
@@ -16,11 +17,11 @@ public interface AccountServiceWs {
 	/**
 	 * Create an account
 	 * 
-	 * @param account - Account
+	 * @param account - AccountRequest
 	 * 
-	 * @return Response<Account>
+	 * @return Response<AccountResponse>
 	 */
-	Response<Account> create(Account account);
+	Response<AccountResponse> create(AccountRequest account);
 	
 	/**
 	 * Find an account
@@ -29,24 +30,15 @@ public interface AccountServiceWs {
 	 * 
 	 * @return Response<Account>
 	 */
-	Response<Account> findAccount(String id);
-	
-	/**
-	 * Update an account
-	 * 
-	 * @param account - Account
-	 * 
-	 * @return Response<Account>
-	 */
-	Response<Account> updateAccount(Account account);
+	Response<AccountResponse> findAccount(String id);
 	
 	/**
 	 * Sign in
 	 * 
-	 * @param account - Account
+	 * @param account - AccountRequest
 	 * 
-	 * @return Response<Account>
+	 * @return Response<AccountResponse>
 	 */
-	Response<Account> signin(@RequestBody Account account); 
+	Response<AccountResponse> signin(@RequestBody AccountRequest account); 
 	
 }

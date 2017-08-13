@@ -5,6 +5,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import br.com.projeto.regis.api.auth.domain.Account;
@@ -29,6 +31,12 @@ public class AccountRepository {
 	private EntityManager entityManager;
 	
 	/**
+	 * @Inject
+	 */
+	@Autowired
+	private PasswordEncoder cryptEncoder;
+	
+	/**
 	 * Persist account
 	 * 
 	 * @param account - Account
@@ -37,6 +45,7 @@ public class AccountRepository {
 	 */
 	public void persist(final Account account) throws PersistException {
 		try {
+			// persist
 			this.entityManager.persist(account);
 			
 		} catch (Exception e) {
@@ -113,19 +122,23 @@ public class AccountRepository {
 	public Account signin(final Account account) throws FindException, AuthException {
 		try {
 			// find account by email and password
-			final Account accountDB = this.entityManager.createNamedQuery("Account.signin", Account.class)
+			final Account accountDB = this.entityManager.createNamedQuery("Account.findByEmail", Account.class)
 					.setParameter("email", account.getEmail())
-					.setParameter("password", account.getPassword()).getSingleResult();
+					.getSingleResult();
 			
-			// update timestamp last login
-			accountDB.updateLastLogin();
+			if (this.cryptEncoder.matches(account.getPassword(), accountDB.getPassword())) {
+				// update timestamp last login
+				accountDB.updateLastLogin();
+				
+				// update
+				this.entityManager.merge(accountDB);
+				
+				return accountDB;
+			}
 			
-			// update
-			this.entityManager.merge(accountDB);
+			throw new AuthException("Usuário e/ou senha inválidos");
 			
-			return accountDB;
-			
-		} catch (NoResultException e) {
+		} catch (NoResultException | AuthException e) {
 			throw new AuthException("Usuário e/ou senha inválidos");
 		} catch (Exception e) {
 			throw new FindException(e);

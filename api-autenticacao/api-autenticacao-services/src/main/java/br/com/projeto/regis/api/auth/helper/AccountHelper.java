@@ -11,6 +11,8 @@ import br.com.projeto.regis.api.auth.domain.Phone;
 import br.com.projeto.regis.api.auth.response.AccountResponse;
 import br.com.projeto.regis.api.auth.response.PhoneResponse;
 import br.com.projeto.regis.api.auth.util.DateUtil;
+import br.com.projetos.regis.api.auth.request.AccountRequest;
+import br.com.projetos.regis.api.auth.request.PhoneRequest;
 
 /**
  * Account helper class
@@ -79,5 +81,42 @@ public class AccountHelper {
 		} else {
 			return Collections.emptyList();
 		}
+	}
+
+	/**
+	 * convert request object to entity
+	 * 
+	 * @param request - AccountRequest
+	 * 
+	 * @return Account
+	 */
+	public Account convertRequestToEntity(final AccountRequest request) {
+		final Account account = new Account();
+		
+		account.setEmail(request.getEmail());
+		account.setName(request.getName());
+		account.setPassword(request.getPassword());
+		account.setPhones(this.convertPhoneRequestToEntity(request.getPhones()));
+		
+		return account;
+	}
+
+	/**
+	 * Convert object PhoneRequest to Phone entity
+	 * 
+	 * @param phones - List<PhoneRequest>
+	 * 
+	 * @return List<Phone>
+	 */
+	private List<Phone> convertPhoneRequestToEntity(final List<PhoneRequest> phones) {
+		final List<Phone> list = new ArrayList<>();
+		
+		if (phones != null) {
+			phones.forEach(p -> {
+				list.add(new Phone(Long.valueOf(p.getNumber()), Integer.valueOf(p.getDdd())));
+			});
+		}
+		
+		return list;
 	}
 }

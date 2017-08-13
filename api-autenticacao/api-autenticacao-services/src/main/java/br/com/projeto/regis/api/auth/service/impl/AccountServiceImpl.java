@@ -32,18 +32,18 @@ public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private ValidateHelper validate;
 	
-	
 	/**
 	 * Create account
 	 * 
 	 * @param account - Account
 	 * 
-	 * @throws PersistException
+	 * @return account
 	 * 
+	 * @throws PersistException
 	 * @throws AccountExistsException
 	 */
 	@Override
-	public void create(final Account account) throws PersistException, AccountExistsException {
+	public Account create(final Account account) throws PersistException, AccountExistsException {
 		LOG.info("Criando conta");
 		
 		this.validate.isObjectNull(account, "Dados da conta nao foram preenchidos");
@@ -70,6 +70,8 @@ public class AccountServiceImpl implements AccountService {
 			LOG.error("", e);
 			throw e;
 		}
+		
+		return account;
 	}
 
 	
@@ -102,10 +104,12 @@ public class AccountServiceImpl implements AccountService {
 	 * 
 	 * @param id - Integer
 	 * 
+	 * @return account
+	 * 
 	 * @throws PersistException
 	 */
 	@Override
-	public void update(final Account account) throws PersistException {
+	public Account update(final Account account) throws PersistException {
 		LOG.info("Atualizando conta de ID");
 		
 		this.validate.isObjectNull(account, "Dados da conta nao foram preenchidos");
@@ -127,5 +131,7 @@ public class AccountServiceImpl implements AccountService {
 			LOG.error("", e);
 			throw e;
 		}
+		
+		return account;
 	}
 }

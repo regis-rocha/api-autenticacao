@@ -15,10 +15,13 @@ import br.com.projeto.regis.api.auth.exception.AccountExistsException;
 import br.com.projeto.regis.api.auth.exception.AccountNotFoundException;
 import br.com.projeto.regis.api.auth.exception.LoginInvalidException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
+import br.com.projeto.regis.api.auth.helper.AccountHelper;
+import br.com.projeto.regis.api.auth.response.AccountResponse;
 import br.com.projeto.regis.api.auth.service.AccountService;
 import br.com.projeto.regis.api.auth.service.LoginService;
 import br.com.projeto.regis.api.auth.service.ws.AccountServiceWs;
 import br.com.projeto.regis.api.auth.types.Response;
+import br.com.projetos.regis.api.auth.request.AccountRequest;
 
 /**
  * Service to manipulate information about Account
@@ -46,31 +49,41 @@ public class AccountServiceRest implements AccountServiceWs {
 	@Autowired
 	private LoginService loginService;
 	
+	/**
+	 * @Inject
+	 */
+	@Autowired
+	private AccountHelper accountHelper;
 	
 	/**
 	 * Create an account
 	 * 
-	 * @param account - Account
+	 * @param account - AccountRequest
 	 * 
-	 * @return Response<Account>
+	 * @return Response<AccountResponse>
 	 */
 	@Override
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Response<Account> create(@RequestBody Account account) {
+	public Response<AccountResponse> create(@RequestBody AccountRequest account) {
 		log.info("Creating account");
+		AccountResponse accountResponse = null;
 		
 		try {
-			this.accountService.create(account);
+			// convert request to entity and persist
+			final Account accountDB = this.accountService.create(this.accountHelper.convertRequestToEntity(account));
+			
+			// convert entity to response
+			accountResponse = this.accountHelper.convertToResponse(accountDB);
 			
 		} catch (AccountExistsException | ValidationException e) {
 			log.error("", e);
-			return new Response<Account>().createValidationErrorResponse().addGeneralMessage(e.getMessage());
+			return new Response<AccountResponse>().createValidationErrorResponse().addGeneralMessage(e.getMessage());
 		} catch (Exception e) {
 			log.error("", e);
-			return new Response<Account>().createErrorResponse();
+			return new Response<AccountResponse>().createErrorResponse();
 		}
 		
-		return new Response<Account>().createSuccessCreatedResponse().addBody(account);
+		return new Response<AccountResponse>().createSuccessCreatedResponse().addBody(accountResponse);
 	}
 	
 	
@@ -79,83 +92,63 @@ public class AccountServiceRest implements AccountServiceWs {
 	 * 
 	 * @param id - String
 	 * 
-	 * @return Response<Account>
+	 * @return Response<AccountResponse>
 	 */
 	@Override
 	@RequestMapping(value = "/account/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
-	public Response<Account> findAccount(@PathVariable String id) {
+	public Response<AccountResponse> findAccount(@PathVariable String id) {
 		log.info("Finding account");
 		
 		try {
+			// find account
 			final Account acc = this.accountService.find(id);
 			
 			if (acc == null) {
-				return new Response<Account>().addHttpStatus(HttpStatus.NOT_FOUND)
+				// not found
+				return new Response<AccountResponse>()
+						.addHttpStatus(HttpStatus.NOT_FOUND)
 						.addGeneralMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
 			} else {
-				return new Response<Account>().createSuccessResponse().addBody(acc);
+				// success
+				return new Response<AccountResponse>().createSuccessResponse()
+						.addBody(this.accountHelper.convertToResponse(acc));
 			}
 			
 		} catch (ValidationException e) {
 			log.error("", e);
-			return new Response<Account>().createValidationErrorResponse();	
+			return new Response<AccountResponse>().createValidationErrorResponse();	
 		} catch (Exception e) {
 			log.error("", e);
-			return new Response<Account>().createErrorResponse();
+			return new Response<AccountResponse>().createErrorResponse();
 		}
 	}
-	
-	
-	/**
-	 * Update an account
-	 * 
-	 * @param account - Account
-	 * 
-	 * @return Response<Account>
-	 */
-	@Override
-	@RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Response<Account> updateAccount(@RequestBody Account account) {
-		log.info("Updating account");
-		
-		try {
-			this.accountService.update(account);
-			
-			return new Response<Account>().createEmptyResponse().addBody(account);
-			
-		} catch (ValidationException e) {
-			log.error("", e);
-			return new Response<Account>().createValidationErrorResponse();
-		} catch (Exception e) {
-			log.error("", e);
-			return new Response<Account>().createErrorResponse();
-		}
-	}
-	
 	
 	/**
 	 * Sign in
 	 * 
-	 * @param account - Account
+	 * @param account - AccountRequest
 	 * 
-	 * @return Response<Account>
+	 * @return Response<AccountResponse>
 	 */
 	@Override
 	@RequestMapping(value = "/account/signing", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Response<Account> signin(@RequestBody Account account) {
+	public Response<AccountResponse> signin(@RequestBody AccountRequest account) {
 		log.info("signing");
 		
 		try {
+			// login
 			final Account accountLogged = this.loginService.login(account.getEmail(), account.getPassword());
 
-			return new Response<Account>().createSuccessResponse().addBody(accountLogged);
+			// result
+			return new Response<AccountResponse>().createSuccessResponse()
+					.addBody(this.accountHelper.convertToResponse(accountLogged));
 		
 		} catch (AccountNotFoundException e) {
-			return new Response<Account>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(e.getMessage());
+			return new Response<AccountResponse>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(e.getMessage());
 		} catch (LoginInvalidException e) {
-			return new Response<Account>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(e.getMessage());
+			return new Response<AccountResponse>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(e.getMessage());
 		} catch (Exception e) {
-			return new Response<Account>().createErrorResponse();
+			return new Response<AccountResponse>().createErrorResponse();
 		}
 	}
 }

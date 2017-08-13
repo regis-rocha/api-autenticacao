@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.com.projeto.regis.api.auth.configuration.BeanConfiguration;
 import br.com.projeto.regis.api.auth.exception.InitilizationBeanException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
 import br.com.projeto.regis.api.auth.validate.BeanValidation;
@@ -32,8 +33,7 @@ import br.com.projeto.regis.api.auth.validate.ValidateHelper;
 @XmlRootElement
 @NamedQueries(value = {
 		@NamedQuery(name = "Account.findByEmail",	query = "SELECT a FROM Account a WHERE a.email=:email"),
-		@NamedQuery(name = "Account.findByToken", 	query = "SELECT a FROM Account a WHERE a.token=:token"),
-		@NamedQuery(name = "Account.signin", 		query = "SELECT a FROM Account a WHERE email=:email AND password=:password")})
+		@NamedQuery(name = "Account.findByToken", 	query = "SELECT a FROM Account a WHERE a.token=:token")})
 public class Account implements Serializable, BeanInitializer<Account>, BeanValidation {
 
 	/**
@@ -169,6 +169,13 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 	}
 
 	/**
+	 * @param token the token to set
+	 */
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	/**
 	 * @return the timestapCreatedToken
 	 */
 	public Calendar getTimestapCreatedToken() {
@@ -198,6 +205,8 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 	 */
 	@PrePersist
 	public void prePersist() {
+		final BeanConfiguration cryptEncoder = new BeanConfiguration();
+		
 		this.id = String.valueOf(UUID.randomUUID());
 		
 		this.created = Calendar.getInstance();
@@ -208,7 +217,11 @@ public class Account implements Serializable, BeanInitializer<Account>, BeanVali
 		
 		this.timestapCreatedToken = Calendar.getInstance();
 		
-		this.token = String.valueOf(UUID.randomUUID());
+		// encrypt token
+		this.token = cryptEncoder.cryptEncoder().encode(String.valueOf(UUID.randomUUID()));
+		
+		// encrypt password
+		this.password = cryptEncoder.cryptEncoder().encode(this.password);
 	}
 	
 
