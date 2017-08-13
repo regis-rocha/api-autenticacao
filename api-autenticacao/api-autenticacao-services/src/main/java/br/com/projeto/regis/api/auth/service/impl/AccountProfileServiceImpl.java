@@ -2,8 +2,9 @@ package br.com.projeto.regis.api.auth.service.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -123,5 +124,41 @@ public class AccountProfileServiceImpl implements AccountProfileService {
 		}
 		
 		return false;
+	}
+
+
+	
+	/**
+	 * Validate if token is valid
+	 * 
+	 * @param token	- String
+	 * 
+	 * @return boolean
+	 */
+	@Override
+	public boolean validateToken(final String token) throws TokenNotFoundException, SessionTimeoutException {
+		LOG.info("Validating token");
+		// message nao autorizado
+		final String naoAutorizado = "Não autorizado";
+		
+		try {
+			if (StringUtils.isBlank(token)) {
+				throw new TokenNotFoundException(naoAutorizado);
+			}
+			
+			final Account accountToken = this.accountRepository.findByToken(token);
+			
+			if (accountToken == null) {
+				throw new TokenNotFoundException(naoAutorizado);
+			}
+			
+			// timeout?
+			isSessionTimeout(accountToken);
+			
+			return true;
+		} catch (Exception e) {
+			LOG.error("", e);
+			throw new TokenNotFoundException(e);
+		}
 	}
 }

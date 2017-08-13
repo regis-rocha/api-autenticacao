@@ -34,4 +34,14 @@ public interface AccountProfileService {
 			throws TokenNotFoundException, AccountNotFoundException, SessionTimeoutException, 
 			InvalidTokenAndAccountException, FindException;
 
+	
+	/**
+	 * Validate if token is valid
+	 * 
+	 * @param token	- String
+	 * 
+	 * @return boolean
+	 */
+	boolean validateToken(String token) throws TokenNotFoundException, SessionTimeoutException;
+
 }

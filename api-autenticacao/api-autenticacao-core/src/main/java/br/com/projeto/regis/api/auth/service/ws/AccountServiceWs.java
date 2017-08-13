@@ -26,11 +26,12 @@ public interface AccountServiceWs {
 	/**
 	 * Find an account
 	 * 
-	 * @param id - String
+	 * @param id 	- String
+	 * @param token	- String
 	 * 
 	 * @return Response<Account>
 	 */
-	Response<AccountResponse> findAccount(String id);
+	Response<AccountResponse> findAccount(String id, String token);
 	
 	/**
 	 * Sign in

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import br.com.projeto.regis.api.auth.Application;
 import br.com.projeto.regis.api.auth.domain.Account;
@@ -22,12 +23,13 @@ import br.com.projeto.regis.api.auth.exception.PersistException;
 import br.com.projeto.regis.api.auth.exception.SessionTimeoutException;
 import br.com.projeto.regis.api.auth.exception.TokenNotFoundException;
 import br.com.projeto.regis.api.auth.exception.ValidationException;
+import br.com.projeto.regis.api.auth.service.AccountProfileService;
 import br.com.projeto.regis.api.auth.service.AccountService;
 import br.com.projeto.regis.api.auth.service.LoginService;
-import br.com.projeto.regis.api.auth.service.AccountProfileService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
+@WebAppConfiguration
 public class UserProfileServiceTest {
 	
 	@Autowired

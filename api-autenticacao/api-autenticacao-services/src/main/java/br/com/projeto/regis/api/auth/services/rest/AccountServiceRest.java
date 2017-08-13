@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -96,8 +97,10 @@ public class AccountServiceRest implements AccountServiceWs {
 	 */
 	@Override
 	@RequestMapping(value = "/account/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
-	public Response<AccountResponse> findAccount(@PathVariable String id) {
+	public Response<AccountResponse> findAccount(@PathVariable String id, @RequestHeader String token) {
 		log.info("Finding account");
+		// message nao autorizado
+		final String naoAutorizado = "Não autorizado";
 		
 		try {
 			// find account
@@ -105,14 +108,16 @@ public class AccountServiceRest implements AccountServiceWs {
 			
 			if (acc == null) {
 				// not found
-				return new Response<AccountResponse>()
-						.addHttpStatus(HttpStatus.NOT_FOUND)
-						.addGeneralMessage(HttpStatus.NOT_FOUND.getReasonPhrase());
-			} else {
-				// success
-				return new Response<AccountResponse>().createSuccessResponse()
-						.addBody(this.accountHelper.convertToResponse(acc));
+				return new Response<AccountResponse>().addHttpStatus(HttpStatus.NOT_FOUND).addGeneralMessage(naoAutorizado);
 			}
+			
+			// compare token account and token form
+			if (!acc.getToken().equals(token)) {
+				return new Response<AccountResponse>().addHttpStatus(HttpStatus.UNAUTHORIZED).addGeneralMessage(naoAutorizado);
+			}
+
+			// success
+			return new Response<AccountResponse>().createSuccessResponse().addBody(this.accountHelper.convertToResponse(acc));
 			
 		} catch (ValidationException e) {
 			log.error("", e);

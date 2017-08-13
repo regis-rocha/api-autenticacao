@@ -13,6 +13,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import br.com.projeto.regis.api.auth.Application;
 import br.com.projeto.regis.api.auth.domain.Account;
@@ -24,6 +25,7 @@ import br.com.projeto.regis.api.auth.service.AccountService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
+@WebAppConfiguration
 public class AccountServiceTest {
 	
 	@Autowired
